@@ -14,7 +14,7 @@ class HtmlNode:
         self.children = children
         self.props = props
 
-    def to_html(self):
+    def to_html(self) -> str:
         raise NotImplementedError()
 
     def props_to_html(self) -> str:
@@ -47,3 +47,22 @@ class LeafNode(HtmlNode):
 
     def __repr__(self) -> str:
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
+
+
+class ParentNode(HtmlNode):
+    def __init__(self, tag: str, children: list['HtmlNode'], props: dict[str, str] | None = None) -> None:
+        super().__init__(tag, None, children, props)
+
+    @override
+    def to_html(self) -> str:
+        if self.tag is None:
+            raise ValueError("Tag is missing")
+
+        if self.children is None:
+            raise ValueError("Missing children")
+
+        inner_html = ""
+        for node in self.children:
+            inner_html += node.to_html()
+
+        return f'<{self.tag}>{inner_html}</{self.tag}>'
