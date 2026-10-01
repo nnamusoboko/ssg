@@ -17,6 +17,9 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             raise ValueError("Matching closing delimiter is not found")
 
         for index, word in enumerate(split_words):
+            if not word:
+                continue
+
             if index % 2 == 0:
                 new_nodes.append(TextNode(word, TextType.PLAIN_TEXT))
             else:
