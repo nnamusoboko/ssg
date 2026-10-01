@@ -6,7 +6,7 @@ from src.textnode import TextNode, TextType
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     new_nodes: list[TextNode] = []
     for node in old_nodes:
-        if node.text_type is not TextType:
+        if node.text_type != TextType.PLAIN_TEXT:
             new_nodes.append(node)
             continue
 
