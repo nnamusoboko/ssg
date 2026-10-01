@@ -11,16 +11,16 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             continue
 
         text = node.text
-        target_words = styled_words(text, delimiter)
-        if len(target_words) <= 0:
+        split_words = text.split(delimiter)
+
+        if len(split_words) % 2 == 0:
             raise ValueError("Matching closing delimiter is not found")
 
-        split_words = text.split(delimiter)
-        for word in split_words:
-            if word in target_words:
-                new_nodes.append(TextNode(word, text_type))
-            else:
+        for index, word in enumerate(split_words):
+            if index % 2 == 0:
                 new_nodes.append(TextNode(word, TextType.PLAIN_TEXT))
+            else:
+                new_nodes.append(TextNode(word, text_type))
 
     return new_nodes
 
