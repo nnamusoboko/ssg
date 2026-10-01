@@ -1,6 +1,7 @@
 import unittest
 
 from src.textnode import TextNode, TextType, text_node_to_html_node
+from src.extract_words import split_nodes_delimiter
 
 
 class TestTextNode(unittest.TestCase):
@@ -40,6 +41,22 @@ class TestTextNodeToHtml(unittest.TestCase):
             html_node.props,
             {"src": "https://image.com/image1", "alt": "This is an image"}
         )
+
+
+class TestSplitNodesDelimiter(unittest.TestCase):
+    def test_split_plain_text(self):
+        node = TextNode("My name is **Nelson** and i love programming", TextType.PLAIN_TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD_TEXT)
+        actual_types = [node.text_type for node in new_nodes]
+
+        expected_nodes = [
+            TextNode("My name is ", TextType.PLAIN_TEXT, None),
+            TextNode("Nelson", TextType.BOLD_TEXT, None),
+            TextNode(" and i love programming", TextType.PLAIN_TEXT, None)
+        ]
+
+        self.assertEqual(new_nodes, expected_nodes)
+        self.assertIn(TextType.BOLD_TEXT, actual_types)
 
 
 if __name__ == "__main__":
