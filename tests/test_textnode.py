@@ -65,6 +65,19 @@ class TestSplitNodesDelimiter(unittest.TestCase):
 
         self.assertIn(TextType.BOLD_TEXT, actual_types)
 
+    def test_split_styled_text_contains_multiple_bold_text(self):
+        node = TextNode("I love **building** toy **projects**", TextType.PLAIN_TEXT)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD_TEXT)
+
+        expected_nodes = [
+            TextNode("I love ", TextType.PLAIN_TEXT, None),
+            TextNode("building", TextType.BOLD_TEXT, None),
+            TextNode(" toy ", TextType.PLAIN_TEXT, None),
+            TextNode("projects", TextType.BOLD_TEXT, None),
+        ]
+
+        self.assertEqual(new_nodes, expected_nodes)
+
 
 if __name__ == "__main__":
     unittest.main()
