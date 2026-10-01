@@ -26,8 +26,3 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
                 new_nodes.append(TextNode(word, text_type))
 
     return new_nodes
-
-
-def styled_words(text: str, delimiter: str) -> list[str]:
-    d = re.escape(delimiter)
-    return re.findall(rf"{d}([^{d}]+){d}", text)
