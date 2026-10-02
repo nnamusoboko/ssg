@@ -78,6 +78,13 @@ class TestSplitNodesDelimiter(unittest.TestCase):
 
         self.assertEqual(new_nodes, expected_nodes)
 
+    def test_split_styled_text_contains_italic_text(self):
+        node = TextNode("I love _building_ toy projects", TextType.PLAIN_TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC_TEXT)
+        actual_types = [node.text_type for node in new_nodes]
 
-if __name__ == "__main__":
-    unittest.main()
+        self.assertIn(TextType.ITALIC_TEXT, actual_types)
+
+
+    if  __name__ == "__main__":
+        unittest.main()
