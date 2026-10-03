@@ -85,6 +85,13 @@ class TestSplitNodesDelimiter(unittest.TestCase):
 
         self.assertIn(TextType.ITALIC_TEXT, actual_types)
 
+    def test_split_styled_text_contains_code_text(self):
+        node = TextNode("I love `building` toy projects", TextType.PLAIN_TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE_TEXT)
+        actual_types = [node.text_type for node in new_nodes]
+
+        self.assertIn(TextType.CODE_TEXT, actual_types)
+
 
     if  __name__ == "__main__":
         unittest.main()
