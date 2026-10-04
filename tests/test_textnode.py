@@ -1,7 +1,11 @@
 import unittest
 
+from src.extract_words import (
+    extract_markdown_images,
+    extract_markdown_links,
+    split_nodes_delimiter,
+)
 from src.textnode import TextNode, TextType, text_node_to_html_node
-from src.extract_words import split_nodes_delimiter
 
 
 class TestTextNode(unittest.TestCase):
@@ -91,6 +95,18 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         actual_types = [node.text_type for node in new_nodes]
 
         self.assertIn(TextType.CODE_TEXT, actual_types)
+
+
+class TestLinkAndImageExtract(unittest.TestCase):
+    def test_extract_markdown_images(self):
+        text = "![alt text](image.jpg)"
+        images = extract_markdown_images(text)
+        self.assertEqual(images, [("alt text", "image.jpg")])
+
+    def test_extract_markdown_links(self):
+        text = "[alt text](link.com)"
+        links = extract_markdown_links(text)
+        self.assertEqual(links, [("alt text", "link.com")])
 
 
 if  __name__ == "__main__":
