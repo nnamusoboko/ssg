@@ -93,5 +93,5 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertIn(TextType.CODE_TEXT, actual_types)
 
 
-    if  __name__ == "__main__":
-        unittest.main()
+if  __name__ == "__main__":
+    unittest.main()
