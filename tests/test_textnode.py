@@ -5,6 +5,7 @@ from src.extract_words import (
     extract_markdown_links,
     split_nodes_delimiter,
     split_nodes_image,
+    split_nodes_link
 )
 from src.textnode import TextNode, TextType, text_node_to_html_node
 
@@ -116,6 +117,14 @@ class TestLinkAndImageExtract(unittest.TestCase):
         self.assertEqual(new_nodes[0].text_type, TextType.IMAGE)
         self.assertEqual(new_nodes[0].text, "alt text")
         self.assertEqual(new_nodes[0].url, "image.jpg")
+
+    def test_split_nodes_link(self):
+        node = TextNode("[alt text](link.com)", TextType.PLAIN_TEXT)
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(len(new_nodes), 1)
+        self.assertEqual(new_nodes[0].text_type, TextType.LINK)
+        self.assertEqual(new_nodes[0].text, "alt text")
+        self.assertEqual(new_nodes[0].url, "link.com")
 
 if  __name__ == "__main__":
     unittest.main()
