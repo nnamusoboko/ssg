@@ -64,3 +64,29 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
             new_nodes.append(TextNode(original_text, TextType.PLAIN_TEXT))
 
     return new_nodes
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes: list[TextNode] = []
+    for node in old_nodes:
+        if node.text_type != TextType.PLAIN_TEXT:
+            new_nodes.append(node)
+            continue
+        original_text = node.text
+
+        link_links = extract_markdown_links(original_text)
+        if not link_links:
+            new_nodes.append(node)
+            continue
+
+        for text, url in link_links:
+            link_link_markdown = f"[{text}]({url})"
+            sections = original_text.split(link_link_markdown, 1)
+
+            if sections[0] != "":
+                new_nodes.append(TextNode(sections[0], TextType.PLAIN_TEXT))
+            new_nodes.append(TextNode(text, TextType.LINK, url))
+            original_text = sections[1]
+
+        if original_text != "":
+            new_nodes.append(TextNode(original_text, TextType.PLAIN_TEXT))
+    return new_nodes
