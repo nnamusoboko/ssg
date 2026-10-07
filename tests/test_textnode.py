@@ -118,6 +118,22 @@ class TestLinkAndImageExtract(unittest.TestCase):
         self.assertEqual(new_nodes[0].text, "alt text")
         self.assertEqual(new_nodes[0].url, "image.jpg")
 
+    def test_split_nodes_image_with_mixed_text(self):
+        node = TextNode(
+            "This is text with images ![personal mascot](./mascot.jpeg) and ![image2](./assets/image2.jpeg)",
+            TextType.PLAIN_TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected_nodes = [
+            TextNode("This is text with images ", TextType.PLAIN_TEXT),
+            TextNode("personal mascot", TextType.IMAGE, "./mascot.jpeg"),
+            TextNode(" and ", TextType.PLAIN_TEXT),
+            TextNode("image2", TextType.IMAGE, "./assets/image2.jpeg")
+        ]
+
+        self.assertEqual(len(new_nodes), len(expected_nodes))
+        self.assertEqual(new_nodes, expected_nodes)
+
     def test_split_nodes_link(self):
         node = TextNode("[alt text](link.com)", TextType.PLAIN_TEXT)
         new_nodes = split_nodes_link([node])
@@ -125,6 +141,23 @@ class TestLinkAndImageExtract(unittest.TestCase):
         self.assertEqual(new_nodes[0].text_type, TextType.LINK)
         self.assertEqual(new_nodes[0].text, "alt text")
         self.assertEqual(new_nodes[0].url, "link.com")
+
+    def test_split_nodes_link_with_mixed_text(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.PLAIN_TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected_nodes = [
+            TextNode("This is text with a link ", TextType.PLAIN_TEXT),
+            TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+            TextNode(" and ", TextType.PLAIN_TEXT),
+            TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
+        ]
+
+        self.assertEqual(len(new_nodes), len(expected_nodes))
+        self.assertEqual(new_nodes, expected_nodes)
+
 
 if  __name__ == "__main__":
     unittest.main()
