@@ -90,3 +90,17 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         if original_text != "":
             new_nodes.append(TextNode(original_text, TextType.PLAIN_TEXT))
     return new_nodes
+
+
+delimiter_map = {
+    TextType.BOLD_TEXT: "**",
+    TextType.ITALIC_TEXT: "_",
+    TextType.CODE_TEXT: "`",
+}
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    new_nodes = split_nodes_image([TextNode(text, TextType.PLAIN_TEXT)])
+    new_nodes = split_nodes_link(new_nodes)
+    for text_type, delimiter in delimiter_map.items():
+        new_nodes = split_nodes_delimiter(new_nodes, delimiter, text_type)
+    return new_nodes
