@@ -5,7 +5,8 @@ from src.extract_words import (
     extract_markdown_links,
     split_nodes_delimiter,
     split_nodes_image,
-    split_nodes_link
+    split_nodes_link,
+    text_to_textnodes,
 )
 from src.textnode import TextNode, TextType, text_node_to_html_node
 
@@ -157,6 +158,18 @@ class TestLinkAndImageExtract(unittest.TestCase):
 
         self.assertEqual(len(new_nodes), len(expected_nodes))
         self.assertEqual(new_nodes, expected_nodes)
+
+
+class TestTextToTextNodes(unittest.TestCase):
+    def test_text_to_textnodes(self):
+        text = "This is **bold** and _italic_ and `code`"
+        nodes = text_to_textnodes(text)
+        self.assertEqual(len(nodes), 6)
+        self.assertEqual(nodes[0].text_type, TextType.PLAIN_TEXT)
+        self.assertEqual(nodes[1].text_type, TextType.BOLD_TEXT)
+        self.assertEqual(nodes[2].text_type, TextType.PLAIN_TEXT)
+        self.assertEqual(nodes[3].text_type, TextType.ITALIC_TEXT)
+        self.assertEqual(nodes[4].text_type, TextType.PLAIN_TEXT)
 
 
 if  __name__ == "__main__":
