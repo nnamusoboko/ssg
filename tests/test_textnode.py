@@ -171,6 +171,27 @@ class TestTextToTextNodes(unittest.TestCase):
         self.assertEqual(nodes[3].text_type, TextType.ITALIC_TEXT)
         self.assertEqual(nodes[4].text_type, TextType.PLAIN_TEXT)
 
+    def test_text_to_textnodes_with_links(self):
+        text = ("This is **text** with an _italic_ word and a `code block` and an ") + \
+            ("![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a ")+ \
+            ("[link](https://boot.dev)")
+        nodes = text_to_textnodes(text)
+
+        expected_nodes = [
+            TextNode("This is ", TextType.PLAIN_TEXT),
+            TextNode("text", TextType.BOLD_TEXT),
+            TextNode(" with an ", TextType.PLAIN_TEXT),
+            TextNode("italic", TextType.ITALIC_TEXT),
+            TextNode(" word and a ", TextType.PLAIN_TEXT),
+            TextNode("code block", TextType.CODE_TEXT),
+            TextNode(" and an ", TextType.PLAIN_TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.PLAIN_TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+        ]
+        self.assertEqual(len(nodes), 10)
+        self.assertEqual(nodes, expected_nodes)
+
 
 if  __name__ == "__main__":
     unittest.main()
