@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 
 class BlockType(Enum):
@@ -9,13 +10,15 @@ class BlockType(Enum):
     ORDERED_LIST = "ordered_list"
 
 def block_to_block_type(block: str) -> BlockType:
-    if block.startswith("# "):
+    lines: list[str] = block.split("\n")
+
+    if re.match(r"#{1,6} ", block):
         return BlockType.HEADING
-    if block.startswith("```"):
+    if block.startswith("```\n") and block.endswith("```"):
         return BlockType.CODE
-    if block.startswith(">") or block.startswith("> "):
+    if all(line.startswith(">") for line in lines):
         return BlockType.QUOTE
-    if block.startswith("- "):
+    if all(line.startswith("- ") for line in lines):
         return BlockType.UNORDERED_LIST
     if is_ordered_list(block):
         return BlockType.ORDERED_LIST
