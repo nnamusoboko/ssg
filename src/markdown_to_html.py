@@ -1,27 +1,64 @@
-from src.htmlnode import HtmlNode
-from src.block_markdown import block_to_block_type, BlockType
-from src.extract_words import (
-    markdown_to_blocks,
-)
-
-def markdown_to_html(markdown: str) -> list[HtmlNode]:
-    markdown_blocks = markdown_to_blocks(markdown)
-    html_nodes = []
-
-    for block in markdown_blocks:
-        if block_to_block_type(block) == BlockType.HEADING:
-            pass
+from src.block_markdown import BlockType, block_to_block_type
+from src.extract_words import markdown_to_blocks, text_to_textnodes
+from src.htmlnode import HtmlNode, ParentNode
+from src.textnode import TextNode, TextType, text_node_to_html_node
 
 
+def markdown_to_html_node(markdown: str) -> ParentNode:
+    children = [block_to_html_node(block) for block in markdown_to_blocks(markdown)]
+    return ParentNode("div", children)
 
-def text_to_children(text: str) -> list[HTMLNode]:
-    # 1. Convert text to inline TextNode objects
-    text_nodes = text_to_textnodes(text)
 
-    # 2. Map each TextNode to an HTMLNode (LeafNode) using text_node_to_html_node
-    children = []
-    for text_node in text_nodes:
-        html_node = text_node_to_html_node(text_node)
-        children.append(html_node)
+def block_to_html_node(block: str) -> ParentNode:
+    match block_to_block_type(block):
+        case BlockType.PARAGRAPH:
+            return paragraph_to_html_node(block)
+        case BlockType.HEADING:
+            return heading_to_html_node(block)
+        case BlockType.CODE:
+            return code_to_html_node(block)
+        case BlockType.QUOTE:
+            return quote_to_html_node(block)
+        case BlockType.UNORDERED_LIST:
+            return unordered_list_to_html_node(block)
+        case BlockType.ORDERED_LIST:
+            return ordered_list_to_html_node(block)
+        case _:
+            raise ValueError("Unsupported block type")
 
-    return children
+
+def text_to_children(text: str) -> list[HtmlNode]:
+    return [text_node_to_html_node(node) for node in text_to_textnodes(text)]
+
+
+def paragraph_to_html_node(block: str) -> ParentNode:
+    text = " ".join(block.split("\n"))
+    return ParentNode("p", text_to_children(text))
+
+
+def heading_to_html_node(block: str) -> ParentNode:
+    level = len(block) - len(block.lstrip("#"))
+    text = block[level + 1:]
+    return ParentNode(f"h{level}", text_to_children(text))
+
+
+def code_to_html_node(block: str) -> ParentNode:
+    # Code is literal, so it skips inline markdown parsing.
+    text = block[4:-3]
+    code_child = text_node_to_html_node(TextNode(text, TextType.PLAIN_TEXT))
+    return ParentNode("pre", [ParentNode("code", [code_child])])
+
+
+def quote_to_html_node(block: str) -> ParentNode:
+    lines = [line[1:].strip() for line in block.split("\n")]
+    return ParentNode("blockquote", text_to_children(" ".join(lines)))
+
+
+def unordered_list_to_html_node(block: str) -> ParentNode:
+    items = [line[2:] for line in block.split("\n")]
+    return ParentNode("ul", [ParentNode("li", text_to_children(item)) for item in items])
+
+
+def ordered_list_to_html_node(block: str) -> ParentNode:
+    items = [line.split(". ", 1)[1] for line in block.split("\n")]
+    return ParentNode("ol", [ParentNode("li", text_to_children(item)) for item in items])

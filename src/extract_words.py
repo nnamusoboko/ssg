@@ -109,7 +109,8 @@ def markdown_to_blocks(markdown: str) -> list[str]:
     blocks = markdown.split("\n\n")
     block_list = []
     for block in blocks:
-        if block:
-            block_list.append(block.strip())
+        stripped = block.strip()
+        if stripped:
+            block_list.append(stripped)
 
     return block_list
