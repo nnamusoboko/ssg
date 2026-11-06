@@ -1,4 +1,6 @@
-# from src.markdown_to_html import
+import os
+from src.markdown_to_html import markdown_to_html_node
+
 
 def extract_title(markdown: str) -> str:
     lines = markdown.split("\n")
@@ -9,5 +11,37 @@ def extract_title(markdown: str) -> str:
 
     raise ValueError("No h1 header found in markdown document")
 
-def generate_page(from_path, template_path, dest_path):
-    pass
+
+def generate_page(from_path, template_path, dest_path) -> None:
+    print(f"Generating page from [{from_path}]\n to [{dest_path}]\n using [{template_path}]")
+
+    check_paths(from_path, template_path)
+
+    with open(from_path, "r", encoding="utf-8") as f:
+        src_md_content = f.read()
+    with open(template_path, "r", encoding="utf-8") as f:
+        template_html_content = f.read()
+
+    page: str = markdown_to_html_node(src_md_content).to_html()
+    page_title = extract_title(src_md_content)
+
+    final_html = template_html_content.replace("{{ Title }}", page_title).replace("{{ Content }}", page)
+    write_to_dest(final_html, dest_path)
+
+
+def write_to_dest(content: str, dest_path: str) -> None:
+    dest_folder_path = os.path.dirname(dest_path)
+    os.makedirs(dest_folder_path, exist_ok=True)
+
+    with open(dest_path, "w", encoding="utf-8") as f:
+        f.write(content)
+
+
+def check_paths(*args) -> None:
+    from_path, template_path = args
+
+    if not os.path.exists(from_path):
+        raise FileNotFoundError(f"{from_path} doesnt exist")
+
+    if not os.path.exists(template_path):
+        raise FileNotFoundError(f"{template_path} doesnt exist")
