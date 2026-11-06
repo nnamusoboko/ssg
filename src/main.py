@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from src.copy_files import src_to_dest
-from src.generate_page import generate_page
+from src.generate_page import generate_pages_recursive
 
 
 def get_root() -> str:
@@ -11,12 +11,11 @@ def get_root() -> str:
 def main() -> None:
    src_path = Path(get_root() + "/static")
    dest_path = Path(get_root() + "/public")
-   from_path = Path(get_root() + "/content/index.md")
+   from_path = Path(get_root() + "/content")
    template_path = Path(get_root() + "/template.html")
-   target_page_path = Path(str(dest_path) + "/index.html")
 
    src_to_dest(src_path, dest_path)
-   generate_page(from_path, template_path, target_page_path)
+   generate_pages_recursive(from_path, template_path, dest_path)
 
 
 if __name__ == "__main__":

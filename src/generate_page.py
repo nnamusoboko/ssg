@@ -12,10 +12,25 @@ def extract_title(markdown: str) -> str:
     raise ValueError("No h1 header found in markdown document")
 
 
-def generate_page(from_path, template_path, dest_path) -> None:
-    print(f"Generating page from [{from_path}]\n to [{dest_path}]\n using [{template_path}]")
-
+def generate_pages_recursive(from_path, template_path, dest_path):
     check_paths(from_path, template_path)
+
+    if os.path.isfile(from_path):
+        generate_page(from_path, template_path, dest_path)
+        return
+
+    for file in os.listdir(from_path):
+        source_path = os.path.join(from_path, file)
+        destination_path = os.path.join(dest_path, file)
+        generate_pages_recursive(source_path, template_path, destination_path)
+
+
+def generate_page(from_path, template_path, dest_path) -> None:
+    target_ext = ".html"
+    base_path, ext = os.path.splitext(dest_path)
+    dest_path = base_path + target_ext
+
+    print(f"Generating page from [{from_path}]\n to [{dest_path}]\n using [{template_path}]")
 
     with open(from_path, "r", encoding="utf-8") as f:
         src_md_content = f.read()
