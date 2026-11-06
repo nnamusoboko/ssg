@@ -1,26 +1,33 @@
-# Static site generator
+# Static Site Generator
 
-Generate a static website from markdown content
+A small static site generator: write Markdown, get ready-to-serve HTML.
 
-## Project Structure
+## Requirements
+
+Python 3.13+
+
+## Usage
 
 ```bash
-├── content/      # Source Markdown files (.md) organized by page/category
-│   ├── blog/     # blog posts 
-│   └── index.md  # Homepage source markdown
-├── docs/         # Final built static assets (.html, .css, images) served by GitHub Pages
-├── src/          # Core SSG application logic
-├── static/       # Raw static assets (images, stylesheets) compiled into build output
-├── tests/        # Test suite verifying HTML parsing, text transformations, and nodes
-├── template.html # Outer shell HTML layout injected with custom {{ Title }} and {{ Content }}
-├── build.sh      # For deployment
-└── main.sh       # for local development 
+./main.sh    # build and serve at http://localhost:8888
+./build.sh   # build for deployment under /repo-name/
+./test.sh    # run tests
 ```
 
-## How to use
+- `main.sh` builds with basepath `/` 
+- `build.sh` builds with `/repo-name/` for GitHub Pages.
 
-Make the scripts executable
+## Structure
 
-## Apperenciation
+```
+content/       Markdown sources (blog posts, homepage, etc.)
+docs/          Generated site (build output)
+src/           Generator logic
+static/        Assets copied into the build
+tests/         Test suite
+template.html  Page shell with {{ Title }} and {{ Content }}
+```
 
-This is a guided project on [boot.dev](https://www.boot.dev/courses/build-static-site-generator-python)
+## Credit
+
+Guided project from [boot.dev](https://www.boot.dev/courses/build-static-site-generator-python)
