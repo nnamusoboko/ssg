@@ -1,10 +1,10 @@
 import os
-from pathlib import Path
 import shutil
 import time
+from pathlib import Path
 
 
-def src_dest(src: Path, dest: Path):
+def src_to_dest(src: Path, dest: Path):
     if os.path.exists(dest):
         try:
             shutil.rmtree(dest)
