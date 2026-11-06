@@ -12,23 +12,23 @@ def extract_title(markdown: str) -> str:
     raise ValueError("No h1 header found in markdown document")
 
 
-def generate_pages_recursive(from_path, template_path, dest_path):
+def generate_pages_recursive(from_path, template_path, dest_path, base_path):
     check_paths(from_path, template_path)
 
     if os.path.isfile(from_path):
-        generate_page(from_path, template_path, dest_path)
+        generate_page(from_path, template_path, dest_path, base_path)
         return
 
     for file in os.listdir(from_path):
         source_path = os.path.join(from_path, file)
         destination_path = os.path.join(dest_path, file)
-        generate_pages_recursive(source_path, template_path, destination_path)
+        generate_pages_recursive(source_path, template_path, destination_path, base_path)
 
 
-def generate_page(from_path, template_path, dest_path) -> None:
+def generate_page(from_path, template_path, dest_path, base_path) -> None:
     target_ext = ".html"
-    base_path, ext = os.path.splitext(dest_path)
-    dest_path = base_path + target_ext
+    base, ext = os.path.splitext(dest_path)
+    dest_path = base + target_ext
 
     print(f"Generating page from [{from_path}]\n to [{dest_path}]\n using [{template_path}]")
 
@@ -40,7 +40,8 @@ def generate_page(from_path, template_path, dest_path) -> None:
     page: str = markdown_to_html_node(src_md_content).to_html()
     page_title = extract_title(src_md_content)
 
-    final_html = template_html_content.replace("{{ Title }}", page_title).replace("{{ Content }}", page)
+    final_html: str = template_html_content.replace("{{ Title }}", page_title).replace("{{ Content }}", page)
+    final_html = final_html.replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}')
     write_to_dest(final_html, dest_path)
 
 
